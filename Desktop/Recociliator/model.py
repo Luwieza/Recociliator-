@@ -22,29 +22,22 @@ import math
 # if 'No', 
 
 # Ask user to input split number.
-split_number = int(input("Enter the split number: "))
+user_input = input("Enter the split number: ").strip() # remove trail spaces
+
+if not user_input.isdigit(): # check if user inputs integer instead of strings.
+    raise ValueError("Invalid input: please enter a numeric value.") 
+    # Raise an error if a string provide instead of a integer.
+
+split_number = int(user_input) # Print out user input.
 
 # Ask the user to confirm split number, if working on the last split,
 # confirm 'Yes' or 'No'.
 confirm_split = input("Are you working on the last split? "
                       "Confirm, 'Yes' or 'No': ").strip().lower()
 
-# Function to check the validation of inputs
-def validate_inputs(qc_sample, total_cartons_p, lenses_per_carton):
-    # Check if qc_sample is less than 30
-    if qc_sample < 30:
-        raise ValueError("Invalid input: QC sample cannot be less than 30.")
-    
-    # Check if total_cartons_p is less than or equal to 16 or if it's exactly 100 or less
-    if not (total_cartons_p <= 16 or total_cartons_p <= 100):
-        raise ValueError("Invalid input: Total cartons must be 16 or less, or can be 100 or less.")
-    
-    # Check if lenses_per_carton is either 30 or 90
-    if lenses_per_carton not in [30, 90]:
-        raise ValueError("Invalid input: Lenses per carton must be either 30 or 90.")
-
 # If the user confirms 'yes'
 if confirm_split == 'yes':
+
     # Ask for necessary inputs
     first_carton_no = int(input("Enter the first carton number: "))
     print("Hint: Use HMI to calculate total lenses to be packed!")
@@ -55,91 +48,130 @@ if confirm_split == 'yes':
     qc_sample = int(input("Enter QC samples: "))
     case_packed = int(input("Enter the total number of packed cases "
                             "excluding partial case: "))
-    lenses_per_carton = int(input("Enter the number of lenses per carton: ").strip())
+    lenses_per_carton = int(input("Enter the number of lenses pe carton: ").strip())
     total_cartons_p = int(input("Enter the total number of cartons inside "
                                 "partial case: "))
 
-    # Validate input values using the validation function
-    try:
-        validate_inputs(qc_sample, total_cartons_p, lenses_per_carton)
+    # Validate input ranges.
+    if qc_sample < 30:
+        print("Invalid input: QC sample cannot be less than 30.")
 
-        # Perform calculations if validation is successful
+    elif total_cartons_p <= 16:
+        print("Invalid input: Total cartons in partial case must be "
+              "between 16 and 100.")
+        
+    elif total_cartons_p <= 100:
+        print("Invalid input: Total cartons in partial case must be "
+              "between 16 and 100.")
+        
+        
+    # Check if lenses_per_carton is 30 or 90
+    elif lenses_per_carton not in [30, 90]:  # Check if lenses_per_carton is 30 or 90
+        print("Invalid input: Lenses per carton must be either 30 or 90.")
+
+    # Check if lenses_per_carton is 1440 or 3000
+    elif num_of_lenses_per_case not in [1440, 3000]:  
+        print("Invalid input: Lenses per carton must be either 1440 or 3000.")
+
+    else:
+        # Perform calculations.
+        
         # Calculate partial case.
         partial_case = total_cartons_p * lenses_per_carton
-
+        
         # Calculate sum of rejected products between partial_case and qc_sample.
         sum_rej = partial_case + qc_sample
-
+        
         # Calculate the difference between lenses to pack and packed lenses.
         diff_rej = lenses_to_pack - (num_of_lenses_per_case * case_packed)
-
+        
         # Calculate the total rejected lenses across the line.
         total_rejects = diff_rej - sum_rej
-
+        
         # Check if total_rejects is correct
         check_answer = sum_rej + (num_of_lenses_per_case * case_packed) + total_rejects
-
+        
         if check_answer == lenses_to_pack:
             print(f"Validation Passed: Total rejects calculation is correct. "
                   f"Lenses to pack: {lenses_to_pack}, Check Answer: {check_answer}")
         else:
             print(f"Validation Failed: Total rejects calculation is incorrect. "
                   f"Lenses to pack: {lenses_to_pack}, Check Answer: {check_answer}")
-
+            
         print(f"Total number of rejected lenses in split {split_number} "
               f"is: {total_rejects} lenses.")
-    
-    except ValueError as e:
-        print(e)
+
 
 elif confirm_split == 'no':
-    # Ask for necessary inputs
+
+     # Ask for necessary inputs
     first_carton_no = int(input("Enter the first carton number: "))
     print("Hint: Use HMI to calculate total lenses to be packed!")
-    # lenses_to_pack = int(input("Enter the total number of lenses to be "
-    #                            "packed: "))
-    # num_of_lenses_per_case = int(input("Enter the total number of lenses "
-    #                                    "per case, excluding partial case: "))
+    #lenses_to_pack = int(input("Enter the total number of lenses to be "
+    #                           "packed: "))
+    #num_of_lenses_per_case = int(input("Enter the total number of lenses "
+    #                                   "per case, excluding partial case: "))
     qc_sample = int(input("Enter QC samples: "))
-    # case_packed = int(input("Enter the total number of packed cases "
+    #case_packed = int(input("Enter the total number of packed cases "
     #                        "excluding partial case: "))
-    lenses_per_carton = int(input("Enter the number of lenses per carton: ").strip())
+    lenses_per_carton = int(input("Enter the number of lenses pe carton: ").strip())
     total_cartons_p = int(input("Enter the total number of cartons inside "
                                 "partial case: "))
-
+    
     # Constant values:
+    
+    # Total number of products to be packed.
     lenses_to_pack = 28000
+    
+    # total number of product packed.
     packed_lenses = 27000
 
-    # Validate input values using the validation function
-    try:
-        validate_inputs(qc_sample, total_cartons_p, lenses_per_carton)
+    # Validate input ranges.
+    if qc_sample < 30:
+        print("Invalid input: QC sample cannot be less than 30.")
+    
+    
+    # Check if total_cartons_p is between 1 and 16
+    elif (total_cartons_p > 16):
+        print("Invalid input: Total cartons must be between 1 and 16.")
 
-        # Perform calculations if validation is successful
+    # Check if total_cartons_p is between 16 and 100
+    elif not (total_cartons_p < 100):
+        print("Invalid input: Total cartons in partial case must be between 16 and 100.")
+
+        
+    # Check if lenses_per_carton is 30 or 90
+    elif lenses_per_carton not in [30, 90]:  # Check if lenses_per_carton is 30 or 90
+        print("Invalid input: Lenses per carton must be either 30 or 90.")
+
+    # Check if lenses_per_carton is 1440 or 3000
+    # elif num_of_lenses_per_case not in [1440, 3000]:  
+    #   print("Invalid input: Lenses per carton must be either 1440 or 3000.")
+
+    else:
+        # Perform calculations.
+        
         # Calculate partial case.
         partial_case = total_cartons_p * lenses_per_carton
-
+        
         # Calculate sum of rejected products between partial_case and qc_sample.
         sum_rej = partial_case + qc_sample
-
+        
         # Calculate the difference between lenses to pack and packed lenses.
         diff_rej = lenses_to_pack - packed_lenses
-
+        
         # Calculate the total rejected lenses across the line.
         total_rejects = diff_rej - sum_rej
-
+        
         # Check if total_rejects is correct
         check_answer = sum_rej + total_rejects
-
+        
         if check_answer == lenses_to_pack:
             print(f"Validation Passed: Total rejects calculation is correct. "
                   f"Lenses to pack: {lenses_to_pack}, Check Answer: {check_answer}")
         else:
             print(f"Validation Failed: Total rejects calculation is incorrect. "
                   f"Lenses to pack: {lenses_to_pack}, Check Answer: {check_answer}")
-
+            
         print(f"Total number of rejected lenses in split {split_number} "
               f"is: {total_rejects} lenses.")
-    
-    except ValueError as e:
-        print(e)
